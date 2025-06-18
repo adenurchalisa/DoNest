@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/campaign.dart';
+import '../../utils/format_rupiah.dart';
 
 class CampaignCard extends StatelessWidget {
   final Campaign campaign;
@@ -14,6 +15,7 @@ class CampaignCard extends StatelessWidget {
       },
       child: Container(
         width: isHorizontal ? 250 : double.infinity,
+        height: isHorizontal ? 245 : null, // > Naikkan tinggi card!
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
@@ -28,7 +30,7 @@ class CampaignCard extends StatelessWidget {
         margin: isHorizontal ? EdgeInsets.only(top: 8, bottom: 8) : EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max, // <-- Pakai max biar semua isi muat
           children: [
             // Gambar campaign
             ClipRRect(
@@ -38,14 +40,14 @@ class CampaignCard extends StatelessWidget {
               ),
               child: Image.network(
                 campaign.imageUrl,
-                height: 95,
+                height: 90, // < Perkecil sedikit tinggi gambar
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
             // Detail campaign
             Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -56,28 +58,32 @@ class CampaignCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
-                    "${campaign.raised} raised from ${campaign.target} total",
+                    "${formatRupiah(campaign.raised)} terkumpul dari",
                     style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                   ),
-                  const SizedBox(height: 8),
+                  Text(
+                    "${formatRupiah(campaign.target)} target",
+                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                  ),
+                  const SizedBox(height: 6),
                   LinearProgressIndicator(
                     value: campaign.getProgress(),
                     minHeight: 6,
                     color: Colors.blue,
                     backgroundColor: Colors.blue.withAlpha((255 * 0.2).toInt()),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(Icons.groups, size: 15, color: Colors.grey[600]),
                       const SizedBox(width: 4),
-                      Text("${campaign.patrons} patrons", style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+                      Text("${campaign.patrons} donatur", style: TextStyle(fontSize: 11, color: Colors.grey[700])),
                       const SizedBox(width: 12),
                       Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
                       const SizedBox(width: 4),
-                      Text("${campaign.daysLeft} days left", style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+                      Text("${campaign.daysLeft} hari lagi", style: TextStyle(fontSize: 11, color: Colors.grey[700])),
                       const Spacer(),
                       IconButton(
                         icon: Icon(
@@ -91,7 +97,6 @@ class CampaignCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8), 
                 ],
               ),
             ),

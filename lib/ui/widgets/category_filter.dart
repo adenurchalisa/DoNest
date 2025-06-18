@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final List<String> categories = ["All", "Education", "Food", "Health", "Shelter"];
+final List<String> categories = ["Semua", "Pendidikan", "Makanan", "Kesehatan", "Tempat Tinggal"];
 
 class CategoryFilter extends StatefulWidget {
   const CategoryFilter({super.key});
