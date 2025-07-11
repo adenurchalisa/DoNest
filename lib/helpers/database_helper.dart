@@ -1,63 +1,85 @@
-import 'package:sqflite/sqflite.dart';
+import 'dart:async';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import '../models/donation.dart';
 
 class DatabaseHelper {
-  // Nama database dan tabel
-  static const String _databaseName = "donasi_app.db";
-  static const String _tableName = "donations";
-  
-  // Singleton pattern
-  DatabaseHelper._();
-  static final DatabaseHelper instance = DatabaseHelper._();
-  
-  // Database instance
+  static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
-  
-  // Getter untuk database
+
+  DatabaseHelper._init();
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     
-    _database = await _initDatabase();
+    _database = await _initDB('donations.db');
     return _database!;
   }
-  
-  // Inisialisasi database
-  Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), _databaseName);
+
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
     
     return await openDatabase(
       path,
       version: 1,
-      onCreate: _createDb,
+      onCreate: _createDB,
     );
   }
-  
-  // Membuat tabel
-  Future<void> _createDb(Database db, int version) async {
+
+  Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE $_tableName(
+      CREATE TABLE donations(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        campaignTitle TEXT,
-        amount INTEGER,
-        date TEXT
+        campaignTitle TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        date TEXT NOT NULL
       )
     ''');
   }
-  
-  // Menyimpan donasi
+
+  // Save donation to database
   Future<int> saveDonation(Donation donation) async {
-    Database db = await database;
-    return await db.insert(_tableName, donation.toMap());
+    final db = await instance.database;
+    return await db.insert('donations', donation.toMap());
   }
-  
-  // Mengambil semua donasi
-  Future<List<Donation>> getAllDonations() async {
-    Database db = await database;
-    var maps = await db.query(_tableName, orderBy: 'id DESC');
+
+  // Get all donations
+  Future<List<Donation>> getDonations() async {
+    final db = await instance.database;
+    final result = await db.query('donations', orderBy: 'id DESC');
     
-    return List.generate(maps.length, (i) {
-      return Donation.fromMap(maps[i]);
-    });
+    return result.map((map) => Donation.fromMap(map)).toList();
+  }
+
+  // Get donation by id
+  Future<Donation?> getDonation(int id) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'donations',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    
+    if (maps.isNotEmpty) {
+      return Donation.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  // Delete donation
+  Future<int> deleteDonation(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      'donations',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Close database
+  Future close() async {
+    final db = await instance.database;
+    db.close();
   }
 }

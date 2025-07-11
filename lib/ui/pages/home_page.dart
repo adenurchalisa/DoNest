@@ -14,8 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
 
-  // Variabel untuk menyimpan data dan status
-  List<Map<String, dynamic>> _donasiDataMendesak = [
+  final List<Map<String, dynamic>> _donasiDataMendesak = [
     {
       "imageUrl": "https://images.unsplash.com/photo-1576381330792-d759250b35ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "title": "Bantuan untuk anak-anak",
@@ -62,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     },
   ];
   
-  List<Map<String, dynamic>> _donasiDataPilihan = [
+  final List<Map<String, dynamic>> _donasiDataPilihan = [
     {
       "imageUrl": "https://www.purbalinggakab.go.id/wp-content/uploads/2020/01/IMG-20200115-WA0004-1280x640.jpg",
       "title": "Bantuan biaya sekolah",
@@ -110,12 +109,6 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    // Tidak perlu lagi memanggil _fetchDonationData karena data sudah ada
-  }
-
-  @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -130,10 +123,9 @@ class _HomePageState extends State<HomePage> {
                   username: "Dermawan",
                   totalDonation: 1600000,
                   onTopUp: () {
-                    // aksi isi saldo
+                    _showTopUpDialog(context);
                   },
                 ),
-                // Section Donasi Mendesak
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -154,7 +146,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                // Card donasi mendesak (horizontal)
                 SizedBox(
                   height: 250,
                   child: ListView.separated(
@@ -187,7 +178,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 28),
-                // Search Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextField(
@@ -209,7 +199,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Section Donasi Pilihan
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -230,7 +219,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                // Filter kategori donasi
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -246,7 +234,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 18),
-                // Card donasi pilihan (vertical, lebar penuh)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -274,11 +261,10 @@ class _HomePageState extends State<HomePage> {
                     )).toList(),
                   ),
                 ),
-                const SizedBox(height: 100), // ruang untuk nav bar melayang
+                const SizedBox(height: 100),
               ],
             ),
           ),
-          // Bottom nav bar melayang
           BottomNavBar(
             currentIndex: currentIndex,
             onTap: (index) {
@@ -318,7 +304,6 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Gambar campaign
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
             child: Image.network(
@@ -366,7 +351,6 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 11, color: Colors.black54),
                 ),
                 const SizedBox(height: 8),
-                // Progress bar
                 LinearProgressIndicator(
                   minHeight: 5,
                   value: terkumpul / target,
@@ -415,5 +399,104 @@ class _HomePageState extends State<HomePage> {
 
   String _formatRupiah(int number) {
     return formatRupiah(number);
+  }
+  
+  void _showTopUpDialog(BuildContext context) {
+    final TextEditingController amountController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Top Up Saldo'),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: amountController,
+                  decoration: InputDecoration(
+                    labelText: 'Nominal Top Up',
+                    prefixText: 'Rp ',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Nominal tidak boleh kosong';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Masukkan angka yang valid';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                Text('Pilih Nominal Cepat:'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _quickTopUpAmount('10000', amountController),
+                    _quickTopUpAmount('50000', amountController),
+                    _quickTopUpAmount('100000', amountController),
+                    _quickTopUpAmount('500000', amountController),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  int amount = int.parse(amountController.text);
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Top Up sebesar Rp${formatRupiah(amount)} berhasil!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  
+                  Navigator.of(context).pop();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+              ),
+              child: Text(
+                'Top Up', 
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  Widget _quickTopUpAmount(String amount, TextEditingController controller) {
+    return ElevatedButton(
+      onPressed: () {
+        controller.text = amount;
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.grey[200],
+        foregroundColor: Colors.black,
+      ),
+      child: Text('Rp $amount'),
+    );
   }
 }

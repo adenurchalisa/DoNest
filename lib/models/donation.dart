@@ -1,17 +1,27 @@
 class Donation {
+  final String campaignTitle;
+  final int amount;
+  final String date;
   final int? id;
-  final String campaignTitle; // Judul kampanye
-  final int amount;          // Jumlah donasi
-  final String date;         // Tanggal donasi (string untuk kemudahan)
 
   Donation({
-    this.id,
     required this.campaignTitle,
     required this.amount,
     required this.date,
+    this.id,
   });
 
-  // Konversi dari Map (dari database)
+  // Convert Donation object to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'campaignTitle': campaignTitle,
+      'amount': amount,
+      'date': date,
+      if (id != null) 'id': id,
+    };
+  }
+
+  // Create Donation object from Map
   factory Donation.fromMap(Map<String, dynamic> map) {
     return Donation(
       id: map['id'],
@@ -21,13 +31,8 @@ class Donation {
     );
   }
 
-  // Konversi ke Map (untuk database)
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'campaignTitle': campaignTitle,
-      'amount': amount,
-      'date': date,
-    };
+  @override
+  String toString() {
+    return 'Donation(id: $id, campaignTitle: $campaignTitle, amount: $amount, date: $date)';
   }
 }

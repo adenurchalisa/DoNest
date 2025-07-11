@@ -1,30 +1,58 @@
 class Campaign {
-  final String title;
   final String imageUrl;
-  final String raised;
-  final String target;
-  final int patrons;
-  final int daysLeft;
-  final bool isBookmarked;
+  final String title;
+  final int terkumpul;
+  final int target;
+  final int donatur;
+  final int sisaHari;
+  final String deskripsi;
+  final String penyelenggara;
+  final String kontak;
 
   Campaign({
-    required this.title,
     required this.imageUrl,
-    required this.raised,
+    required this.title,
+    required this.terkumpul,
     required this.target,
-    required this.patrons,
-    required this.daysLeft,
-    this.isBookmarked = false,
+    required this.donatur,
+    required this.sisaHari,
+    required this.deskripsi,
+    required this.penyelenggara,
+    required this.kontak,
   });
 
-  double getProgress() {
-    try {
-      final raisedNum = double.parse(raised.replaceAll(RegExp(r'[^\d.]'), ''));
-      final targetNum = double.parse(target.replaceAll(RegExp(r'[^\d.]'), ''));
-      if (targetNum == 0) return 0;
-      return (raisedNum / targetNum).clamp(0.0, 1.0);
-    } catch (_) {
-      return 0.0;
-    }
+  // Convert Map to Campaign object
+  factory Campaign.fromMap(Map<String, dynamic> map) {
+    return Campaign(
+      imageUrl: map['imageUrl'] ?? '',
+      title: map['title'] ?? '',
+      terkumpul: map['terkumpul'] ?? 0,
+      target: map['target'] ?? 0,
+      donatur: map['donatur'] ?? 0,
+      sisaHari: map['sisaHari'] ?? 0,
+      deskripsi: map['deskripsi'] ?? '',
+      penyelenggara: map['penyelenggara'] ?? '',
+      kontak: map['kontak'] ?? '',
+    );
+  }
+
+  // Convert Campaign object to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'imageUrl': imageUrl,
+      'title': title,
+      'terkumpul': terkumpul,
+      'target': target,
+      'donatur': donatur,
+      'sisaHari': sisaHari,
+      'deskripsi': deskripsi,
+      'penyelenggara': penyelenggara,
+      'kontak': kontak,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Campaign(title: $title, terkumpul: $terkumpul, target: $target)';
   }
 }
