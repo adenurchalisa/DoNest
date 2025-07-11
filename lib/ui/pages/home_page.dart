@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/header_home.dart';
+import '../pages/detail_donasi_page.dart';
+import '../../utils/format_rupiah.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,75 +14,106 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
 
-  final List<Map<String, dynamic>> _donasiDataMendesak = [
+  // Variabel untuk menyimpan data dan status
+  List<Map<String, dynamic>> _donasiDataMendesak = [
     {
-      'imageUrl': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-      'title': 'Bantuan untuk anak-anak',
-      'terkumpul': 5000000,
-      'target': 10000000,
-      'donatur': 200,
-      'sisaHari': 3,
+      "imageUrl": "https://images.unsplash.com/photo-1576381330792-d759250b35ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "title": "Bantuan untuk anak-anak",
+      "terkumpul": 5000000,
+      "target": 10000000,
+      "donatur": 200,  
+      "sisaHari": 3,
+      "deskripsi": "Bantuan untuk anak-anak yang membutuhkan akses pendidikan.",
+      "penyelenggara": "Yayasan Anak Ceria",
+      "kontak": "081234567890",
     },
     {
-      'imageUrl': 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
-      'title': 'Pakaian & kebutuhan untuk tunawisma',
-      'terkumpul': 9500000,
-      'target': 10000000,
-      'donatur': 300,
-      'sisaHari': 5,
+      "imageUrl": "https://cdn.antaranews.com/cache/1200x800/2022/11/02/Screenshot_20221101-182556_Facebook.jpg",
+      "title": "Pakaian & kebutuhan untuk tunawisma",
+      "terkumpul": 9500000,
+      "target": 10000000,
+      "donatur": 300,
+      "sisaHari": 5,
+      "deskripsi": "Bantuan pakaian dan kebutuhan dasar untuk tunawisma.",
+      "penyelenggara": "Yayasan Peduli Sesama",
+      "kontak": "081234567891",
     },
     {
-      'imageUrl': 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308',
-      'title': 'Bantuan buku untuk sekolah desa',
-      'terkumpul': 3500000,
-      'target': 7000000,
-      'donatur': 150,
-      'sisaHari': 2,
+      "imageUrl": "https://awsimages.detik.net.id/community/media/visual/2022/07/19/kelas-jauh-milik-sdn-118-di-desa-sendana-kecamatan-bittuang-tana-toraja-sulsel_169.jpeg?w=1200",
+      "title": "Bantuan buku untuk sekolah desa",
+      "terkumpul": 3500000,
+      "target": 7000000,
+      "donatur": 150,
+      "sisaHari": 2,
+      "deskripsi": "Pengadaan buku dan alat tulis untuk sekolah di desa terpencil.",
+      "penyelenggara": "Yayasan Pendidikan Indonesia",
+      "kontak": "081234567892",
     },
     {
-      'imageUrl': 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429',
-      'title': 'Sembako untuk keluarga prasejahtera',
-      'terkumpul': 4200000,
-      'target': 9000000,
-      'donatur': 110,
-      'sisaHari': 1,
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe4zIaSnTslfefcZ7eyeuPpdisfDjO_FUwfw&sg",
+      "title": "Sembako untuk keluarga prasejahtera",
+      "terkumpul": 4200000,
+      "target": 9000000,
+      "donatur": 110,
+      "sisaHari": 1,
+      "deskripsi": "Bantuan sembako untuk keluarga prasejahtera.",
+      "penyelenggara": "Yayasan Kemanusiaan",
+      "kontak": "081234567893",
+    },
+  ];
+  
+  List<Map<String, dynamic>> _donasiDataPilihan = [
+    {
+      "imageUrl": "https://www.purbalinggakab.go.id/wp-content/uploads/2020/01/IMG-20200115-WA0004-1280x640.jpg",
+      "title": "Bantuan biaya sekolah",
+      "terkumpul": 3500000,
+      "target": 5000000,
+      "donatur": 80,
+      "sisaHari": 10,
+      "deskripsi": "Bantuan biaya sekolah untuk anak-anak kurang mampu.",
+      "penyelenggara": "Yayasan Pendidikan",
+      "kontak": "081234567894",
+    },
+    {
+      "imageUrl": "https://cdn.antaranews.com/cache/1200x800/2023/03/15/RS-Bhayangkara.jpg",
+      "title": "Pengobatan gratis lansia",
+      "terkumpul": 2200000,
+      "target": 5000000,
+      "donatur": 55,
+      "sisaHari": 8,
+      "deskripsi": "Pengobatan gratis untuk lansia di daerah terpencil.",
+      "penyelenggara": "Yayasan Kesehatan",
+      "kontak": "081234567895",
+    },
+    {
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjDzzwg3pJe0yoInNGnsM5Lp0Cy3mjJfdGjg&s",
+      "title": "Bantuan air bersih desa",
+      "terkumpul": 4800000,
+      "target": 8000000,
+      "donatur": 130,
+      "sisaHari": 6,
+      "deskripsi": "Bantuan air bersih untuk desa yang kekurangan sumber air.",
+      "penyelenggara": "Yayasan Lingkungan",
+      "kontak": "081234567896",
+    },
+    {
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaqckXSun9An1DjZQwYh4TuvXRaNJ3nEGd9cyHB2wpvM5a7y-aoBEqMAHuPDdaUMPR5B8&usqp=CAU",
+      "title": "Perlengkapan sekolah yatim",
+      "terkumpul": 2700000,
+      "target": 4000000,
+      "donatur": 70,
+      "sisaHari": 12,
+      "deskripsi": "Pengadaan perlengkapan sekolah untuk anak-anak yatim.",
+      "penyelenggara": "Yayasan Yatim Piatu",
+      "kontak": "081234567897",
     },
   ];
 
-  final List<Map<String, dynamic>> _donasiDataPilihan = [
-    {
-      'imageUrl': 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
-      'title': 'Bantuan biaya sekolah',
-      'terkumpul': 3500000,
-      'target': 5000000,
-      'donatur': 80,
-      'sisaHari': 10,
-    },
-    {
-      'imageUrl': 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99',
-      'title': 'Pengobatan gratis lansia',
-      'terkumpul': 2200000,
-      'target': 5000000,
-      'donatur': 55,
-      'sisaHari': 8,
-    },
-    {
-      'imageUrl': 'https://images.unsplash.com/photo-1464983953574-0892a716854b',
-      'title': 'Bantuan air bersih desa',
-      'terkumpul': 4800000,
-      'target': 8000000,
-      'donatur': 130,
-      'sisaHari': 6,
-    },
-    {
-      'imageUrl': 'https://images.unsplash.com/photo-1500534623283-312aade485b7',
-      'title': 'Perlengkapan sekolah yatim',
-      'terkumpul': 2700000,
-      'target': 4000000,
-      'donatur': 70,
-      'sisaHari': 12,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Tidak perlu lagi memanggil _fetchDonationData karena data sudah ada
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +132,59 @@ class _HomePageState extends State<HomePage> {
                   onTopUp: () {
                     // aksi isi saldo
                   },
+                ),
+                // Section Donasi Mendesak
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Donasi Mendesak",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          "Lihat semua",
+                          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // Card donasi mendesak (horizontal)
+                SizedBox(
+                  height: 250,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: _donasiDataMendesak.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 16),
+                    itemBuilder: (context, i) {
+                      final d = _donasiDataMendesak[i];
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailDonasiPage(campaign: d),
+                            ),
+                          );
+                        },
+                        child: _donasiCard(
+                          imageUrl: d["imageUrl"],
+                          title: d["title"],
+                          terkumpul: d["terkumpul"],
+                          target: d["target"],
+                          donatur: d["donatur"],
+                          sisaHari: d["sisaHari"],
+                          width: 260,
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(height: 28),
                 // Search Bar
@@ -123,50 +209,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Section Donasi Mendesak
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Donasi Mendesak',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Text(
-                          'Lihat semua',
-                          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 14),
-                // Card donasi mendesak (horizontal)
-                SizedBox(
-                  height: 250,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: _donasiDataMendesak.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 16),
-                    itemBuilder: (context, i) {
-                      final d = _donasiDataMendesak[i];
-                      return _donasiCard(
-                        imageUrl: d['imageUrl'],
-                        title: d['title'],
-                        terkumpul: d['terkumpul'],
-                        target: d['target'],
-                        donatur: d['donatur'],
-                        sisaHari: d['sisaHari'],
-                        width: 260,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 30),
                 // Section Donasi Pilihan
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -174,13 +216,13 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Donasi Pilihan',
+                        "Donasi Pilihan",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       GestureDetector(
                         onTap: () {},
                         child: Text(
-                          'Lihat semua',
+                          "Lihat semua",
                           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                       ),
@@ -193,13 +235,13 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
-                      _categoryChip('Semua', true),
+                      _categoryChip("Semua", true),
                       const SizedBox(width: 8),
-                      _categoryChip('Pendidikan', false),
+                      _categoryChip("Pendidikan", false),
                       const SizedBox(width: 8),
-                      _categoryChip('Makanan', false),
+                      _categoryChip("Makanan", false),
                       const SizedBox(width: 8),
-                      _categoryChip('Kesehatan', false),
+                      _categoryChip("Kesehatan", false),
                     ],
                   ),
                 ),
@@ -210,14 +252,24 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: _donasiDataPilihan.map((d) => Padding(
                       padding: const EdgeInsets.only(bottom: 18.0),
-                      child: _donasiCard(
-                        imageUrl: d['imageUrl'],
-                        title: d['title'],
-                        terkumpul: d['terkumpul'],
-                        target: d['target'],
-                        donatur: d['donatur'],
-                        sisaHari: d['sisaHari'],
-                        width: screenWidth - 40, // full width dikurangi padding
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailDonasiPage(campaign: d),
+                            ),
+                          );
+                        },
+                        child: _donasiCard(
+                          imageUrl: d["imageUrl"],
+                          title: d["title"],
+                          terkumpul: d["terkumpul"],
+                          target: d["target"],
+                          donatur: d["donatur"],
+                          sisaHari: d["sisaHari"],
+                          width: screenWidth - 40,
+                        ),
                       ),
                     )).toList(),
                   ),
@@ -274,6 +326,29 @@ class _HomePageState extends State<HomePage> {
               height: 92,
               width: width ?? double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 92,
+                  width: width ?? double.infinity,
+                  color: Colors.grey[300],
+                  child: Icon(Icons.image_not_supported, color: Colors.grey[500]),
+                );
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  height: 92,
+                  width: width ?? double.infinity,
+                  color: Colors.grey[200],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                          : null,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           Padding(
@@ -287,7 +362,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                 const SizedBox(height: 6),
                 Text(
-                  'Rp${_formatRupiah(terkumpul)} terkumpul dari\nRp${_formatRupiah(target)} target',
+                  "Rp${_formatRupiah(terkumpul)} terkumpul dari\nRp${_formatRupiah(target)} target",
                   style: TextStyle(fontSize: 11, color: Colors.black54),
                 ),
                 const SizedBox(height: 8),
@@ -303,11 +378,11 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.people, size: 16, color: Colors.grey),
                     const SizedBox(width: 4),
-                    Text('$donatur donatur', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    Text("$donatur donatur", style: TextStyle(fontSize: 12, color: Colors.black54)),
                     const SizedBox(width: 14),
                     Icon(Icons.calendar_today, size: 15, color: Colors.grey),
                     const SizedBox(width: 4),
-                    Text('$sisaHari hari lagi', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    Text("$sisaHari hari lagi", style: TextStyle(fontSize: 12, color: Colors.black54)),
                     const Spacer(),
                     Icon(Icons.bookmark_border, size: 19, color: Colors.grey[400]),
                   ],
@@ -339,13 +414,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _formatRupiah(int number) {
-    String str = number.toString();
-    String result = '';
-    for (int i = 0; i < str.length; i++) {
-      int pos = str.length - i;
-      result = str[pos - 1] + result;
-      if (i % 3 == 2 && i != str.length - 1) result = '.' + result;
-    }
-    return result;
+    return formatRupiah(number);
   }
 }

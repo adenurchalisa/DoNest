@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'donation_form_page.dart';
 
 class DetailDonasiPage extends StatelessWidget {
   final Map<String, dynamic> campaign;
@@ -37,7 +38,7 @@ class DetailDonasiPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      campaign['title'],
+                      campaign['title'] ?? '',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 22,
@@ -88,31 +89,33 @@ class DetailDonasiPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  campaign['deskripsi'],
+                  campaign['deskripsi'] ??
+                      "Belum ada deskripsi untuk program ini. Tambahkan deskripsi pada data donasi untuk tampilan lebih informatif.",
                   style: const TextStyle(fontSize: 15, color: Colors.black87),
                   textAlign: TextAlign.justify,
                 ),
               ),
               const SizedBox(height: 30),
-              // Info penyelenggara
+              // Info penyelenggara (dummy)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 22,
-                      backgroundImage: AssetImage('assets/organizer.png'), // Ganti sesuai asset/logo
+                      backgroundColor: Colors.blue[100],
+                      child: Icon(Icons.volunteer_activism, color: Colors.blue, size: 28),
                     ),
                     const SizedBox(width: 14),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          campaign['penyelenggara'],
+                          campaign['penyelenggara'] ?? "Yayasan Kebaikan",
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                         ),
                         Text(
-                          campaign['kontak'],
+                          campaign['kontak'] ?? "08123456789",
                           style: TextStyle(color: Colors.black54, fontSize: 13),
                         ),
                       ],
@@ -139,7 +142,12 @@ class DetailDonasiPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: ElevatedButton(
                 onPressed: () {
-                  // aksi donasi
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DonationFormPage(campaign: campaign),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -167,7 +175,7 @@ class DetailDonasiPage extends StatelessWidget {
     for (int i = 0; i < str.length; i++) {
       int pos = str.length - i;
       result = str[pos - 1] + result;
-      if (i % 3 == 2 && i != str.length - 1) result = '.' + result;
+      if (i % 3 == 2 && i != str.length - 1) result = '.$result';
     }
     return result;
   }

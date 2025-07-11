@@ -36,7 +36,9 @@ class HeaderHome extends StatelessWidget {
                 backgroundColor: Colors.white,
                 child: CircleAvatar(
                   radius: 25,
-                  backgroundImage: AssetImage('assets/avatar.png'), // Ganti dengan asset kamu
+                  backgroundColor: Colors.blue.shade100,
+                  child: Icon(Icons.person, color: Colors.blue.shade800, size: 30),
+                  // Mengganti AssetImage dengan Icon untuk menghindari error
                 ),
               ),
               const SizedBox(width: 16),
@@ -84,7 +86,7 @@ class HeaderHome extends StatelessWidget {
           // Komponen saldo donasi
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.55),
+              color: Colors.white.withAlpha(140), // 0.55 * 255 = ~140
               borderRadius: BorderRadius.circular(32),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -162,7 +164,7 @@ class HeaderHome extends StatelessWidget {
     for (int i = 0; i < str.length; i++) {
       int pos = str.length - i;
       result = str[pos - 1] + result;
-      if (i % 3 == 2 && i != str.length - 1) result = '.' + result;
+      if (i % 3 == 2 && i != str.length - 1) result = '.$result';
     }
     return result;
   }
